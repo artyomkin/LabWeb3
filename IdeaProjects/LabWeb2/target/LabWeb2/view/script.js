@@ -1,3 +1,5 @@
+const GRAPH_SIZE = 500;
+
 document.addEventListener("DOMContentLoaded", function(){
     let form = document.getElementById("coordinates_form");
     form.addEventListener("submit", formSend);
@@ -5,7 +7,6 @@ document.addEventListener("DOMContentLoaded", function(){
     let resultArr = new Array();
     let lastResultIndex = 0;
     const MAX_RESULTS_IN_TABLE = 3;
-    const GRAPH_SIZE = 500;
 
     collectResults();
     checkOverflow();
@@ -31,67 +32,25 @@ document.addEventListener("DOMContentLoaded", function(){
     }
     
     async function formSend(form_event){
-
         form_event.preventDefault();
-
         let btn = document.getElementById("submit_request");
         btn.setAttribute("disabled","disabled")
-
         let formReq = document.getElementsByClassName("required");
-
         for(let i = 0; i<formReq.length; i++){
-
             let inputField = formReq[i];
-
             inputField.classList.remove("error");
-
             let siblings = inputField.parentElement.childNodes;
-
             for (let j = 0; j<siblings.length; j++){
-
                 if(siblings[j].className == "error_message"){
                     siblings[j].innerHTML = "";
                 }
-
             }
-            
         }
-
+        let asyncInput = document.querySelector("#hidden_async");
+        asyncInput.value = "false";
         let error = await formValidate();
-
-        let xBoxes = document.querySelectorAll("input[type='checkbox'][name='x']");
-        let RBoxes = document.querySelectorAll("input[type='checkbox'][name='R']");
-        let yVal = document.querySelector('#y').value;
-        let xVal = [];
-        let RVal = [];
-        for (let i = 0; i<xBoxes.length; i++){
-            if (xBoxes[i].checked){
-                xVal.push(xBoxes[i].value);
-            }
-        }
-        for (let i = 0; i<RBoxes.length; i++){
-            if (RBoxes[i].checked){
-                RVal.push(RBoxes[i].value);
-            }
-        }
-
-        let content = {
-            x: xVal,
-            y: yVal,
-            R: RVal
-        }
         if(!error){
-
-            let request = new XMLHttpRequest();
-            request.open('POST','controller');
-            request.send(content);
-            request.onreadystatechange=function(){
-                if (request.readyState === XMLHttpRequest.DONE && request.status == 200){
-                    console.log(request.response);
-                }
-            }
-            // document.getElementById("coordinates_form").submit();
-
+            document.getElementById("coordinates_form").submit();
         }
 
         btn.removeAttribute("disabled");
@@ -106,7 +65,24 @@ document.addEventListener("DOMContentLoaded", function(){
         let isNumber = true;
         let isPositive = true;
         let isInRange = true;
-        
+        let RSpecified = false;
+        let xSpecified = false;
+        let RCheckboxes = document.querySelectorAll('input[type="checkbox"][name="R"]');
+        let xCheckboxes = document.querySelectorAll('input[type="checkbox"][name="x"]');
+        for (let i = 0; i<RCheckboxes.length; i++){
+            console.log(RCheckboxes[i]);
+            if (RCheckboxes[i].checked){
+                RSpecified = true;
+                break;
+            }
+        }
+        for (let i = 0; i<xCheckboxes.length; i++){
+            console.log(xCheckboxes[i]);
+            if (xCheckboxes[i].checked){
+                xSpecified = true;
+                break;
+            }
+        }
         for (let i = 0; i<formReq.length; i++){
             
             let inputField = formReq[i];
@@ -117,7 +93,7 @@ document.addEventListener("DOMContentLoaded", function(){
                 
                 isEmpty = true;
                 
-                setError(inputField, siblings, "Field must not be empty"); //TODO валидация чекбоксов, чтобы не были пустыми
+                setError(inputField, siblings, "Field must not be empty");
                 
             } else if (isNaN(inputField.value)) {
                 
@@ -137,11 +113,15 @@ document.addEventListener("DOMContentLoaded", function(){
                 
                 setError(inputField, siblings, "Value must be in range (-5;3)");
                 
+            } else if (!RSpecified){
+                setError(inputField, siblings, "You should choose R");
+            } else if (!xSpecified){
+                setError(inputField, siblings, "You should choose x");
             }
             
         }
         
-        return !(!isEmpty && isNumber && isPositive && isInRange);
+        return !(!isEmpty && isNumber && isPositive && isInRange && RSpecified && xSpecified);
         
     }
     
@@ -289,43 +269,42 @@ document.addEventListener("DOMContentLoaded", function(){
         
     }
     
-    function calculatePercentage(n, R){
-        
-        let percentage = 50 + n/R * 100 * 0.5;
-        
-        if(percentage > 90) {
-            percentage = 90
-        } else if (percentage < 6){
-            percentage = 6
-        }
-        
-        return percentage;
-    }
-
-    function drawDot(xPercentage, yPercentage, green){
-
-        let canvas = document.getElementById("graph");
-        let context = canvas.getContext("2d");
-
-        context.beginPath();
-
-        context.fillStyle = green ? "green" : "red";
-
-        context.arc(
-            xPercentage * GRAPH_SIZE / 100,
-            yPercentage * GRAPH_SIZE / 100,
-            5,
-            0,
-            Math.PI*2,
-            false
-        )
-
-        context.fill();
-
-        context.fillStyle = "black";
-
-        context.stroke();
-
-    }
 
 })
+function calculatePercentage(n, R){
+
+    let percentage = 50 + n/R * 100 * 0.5;
+
+    if(percentage > 90) {
+        percentage = 90
+    } else if (percentage < 6){
+        percentage = 6
+    }
+
+    return percentage;
+}
+function drawDot(xPercentage, yPercentage, green){
+
+    let canvas = document.getElementById("graph");
+    let context = canvas.getContext("2d");
+
+    context.beginPath();
+
+    context.fillStyle = green ? "green" : "red";
+
+    context.arc(
+        xPercentage * GRAPH_SIZE / 100,
+        yPercentage * GRAPH_SIZE / 100,
+        5,
+        0,
+        Math.PI*2,
+        false
+    )
+
+    context.fill();
+
+    context.fillStyle = "black";
+
+    context.stroke();
+
+}

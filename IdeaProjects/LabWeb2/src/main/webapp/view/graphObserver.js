@@ -18,25 +18,33 @@ document.addEventListener("DOMContentLoaded", function(){
         event.preventDefault();
 
         if(getRadius().length === 1){
-
+            document.querySelector('.radius_error').setAttribute("style","display:none");
             let x = event.pageX - width;
             let y = yTop - event.pageY + width/2;
             sendForm(x,y,getRadius()[0]);
 
+        } else if (getRadius().length > 1){
+            setRaidusError("You should select only one radius");
+        } else {
+            setRaidusError("You should select at least one radius");
         }
 
 
     }
-
+    function setRaidusError(message){
+        let radiusErrorTag = document.querySelector('.radius_error');
+        radiusErrorTag.setAttribute("style","display: visible;");
+        radiusErrorTag.innerHTML = message;
+    }
     function sendForm(x,y,R){
-        let content = {
-            x: [x/(GRAPH_SIZE/2) * R],
-            y: [y/(GRAPH_SIZE/2) * R],
-            R: [R]
-        }
+        x = x/(GRAPH_SIZE/2) * R;
+        y = y/(GRAPH_SIZE/2) * R;
+        let content = "x=" + x + "&y=" + y + "&R=" + R + "&async=true";
         let request = new XMLHttpRequest();
+
         request.open('POST','controller');
-        request.send(JSON.stringify(content));
+        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        request.send(content);
         request.onreadystatechange=function(){
             if (request.readyState === XMLHttpRequest.DONE && request.status == 200){
                 let response = JSON.parse(request.response);
@@ -69,31 +77,7 @@ document.addEventListener("DOMContentLoaded", function(){
          return result;
     }
 
-    function drawDot(xPercentage, yPercentage, green){
 
-        let canvas = document.getElementById("graph");
-        let context = canvas.getContext("2d");
-
-        context.beginPath();
-
-        context.fillStyle = green ? "green" : "red";
-
-        context.arc(
-            xPercentage * GRAPH_SIZE / 100,
-            yPercentage * GRAPH_SIZE / 100,
-            5,
-            0,
-            Math.PI*2,
-            false
-        )
-
-        context.fill();
-
-        context.fillStyle = "black";
-
-        context.stroke();
-
-    }
     function calculatePercentage(n, R){
 
         let percentage = 50 + n/R * 100 * 0.5;

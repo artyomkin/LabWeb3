@@ -5,11 +5,13 @@ public class Request {
     private Double[] x;
     private Double[] y;
     private Double[] R;
+    private boolean async;
 
-    public Request(Double[] x, Double[] y, Double[] r){
+    public Request(Double[] x, Double[] y, Double[] r, boolean async){
         this.x = x;
         this.y = y;
         this.R = r;
+        this.async = async;
     }
 
     public Double[] getX() {
@@ -24,18 +26,6 @@ public class Request {
         return R;
     }
 
-    @Override
-    public String toString(){
-        String res = "";
-        for(double xval : x){
-            res += xval + "\n";
-        }
-        for(double yval : y){
-            res += yval + "\n";
-        }
-        for(double rval : R){
-            res += rval + "\n";
-        }
-        return res;
-    }
+    public boolean isAsync() {return async;}
+
 }

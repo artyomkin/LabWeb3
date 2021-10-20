@@ -68,6 +68,7 @@
                         <br>
                         <label for="y">Введите y</label>
                         <input type="hidden" id="hidden_y">
+                        <input type="hidden" id="hidden_async" value="false" name="async">
                         <input type="text" name="y" id="y" class="required number" maxlength="10">
                         <span class="error_message"></span>
                     </div>
@@ -82,47 +83,15 @@
                         <p class="radio_btns radio_R"><input type="checkbox" name="R" value="5">5</p>
                         <span class="error_message"></span>
                     </div>
-
-
                     <br>
                     <input type="submit" value="Отправить" id="submit_request">
                 </form>
             </div>
         </div>
+
     </div>
-    <div class="table">
-        <table>
-            <thead>
-            <td class="top left">x</td>
-            <td class="top">y</td>
-            <td class="top">R</td>
-            <td class="top right">Попадание</td>
-            </thead>
+    <div class="radius_error"></div>
 
-            <tbody id="results">
-                <c:forEach var="result" items="${applicationScope.get('dots')}">
-                    <tr class="result_row">
-                        <td class="left x_result"><fmt:formatNumber type="number" value="${result.getX()}" maxFractionDigits="2"></fmt:formatNumber></td>
-                        <td class="y_result"><fmt:formatNumber type="number" value="${result.getY()}" maxFractionDigits="2"></fmt:formatNumber></td>
-                        <td class="R_result"><c:out value="${result.getR()}"></c:out></td>
-                        <td class="right hit_result"><c:out value="${result.isHit()}"></c:out></td>
-                    </tr>
-                </c:forEach>
-            </tbody>
-
-            <tfoot>
-            <td class="left bot"></td>
-            <td class="bot"></td>
-            <td class="bot"></td>
-            <td class="right bot"></td>
-            </tfoot>
-        </table>
-
-        <div class="pagination">
-            <span id="pag_prev" class="hidden">Previous</span>
-            <span id="pag_next" class="hidden">Next</span>
-        </div>
-    </div>
 
 </div>
 
@@ -374,39 +343,6 @@
         flex-direction: column;
     }
 
-    .table{
-        max-width: 350px;
-        min-width: 200px;
-        margin-left: 75px;
-        margin-top: 50px;
-    }
-
-    table{
-        border-collapse: collapse;
-        width: 100%;
-    }
-
-    table td{
-        padding: 15px;
-        text-align: center;
-        border: 1px solid #40514e;
-    }
-
-    table .top{
-        border-top:none;
-    }
-
-    table .bot{
-        border-bottom: none;
-    }
-
-    table .left{
-        border-left: none;
-    }
-
-    table .right{
-        border-right: none;
-    }
 
     .error{
         box-shadow: 0 0 30px #40514e;
@@ -419,64 +355,29 @@
         height: 10px;
     }
 
-    .table .pagination{
-        width: 80%;
-        margin: auto;
-        margin-top: 20px;
-        display:  flex;
-        justify-content: space-between;
-        font-size: 13px;
-    }
 
-    .table .pagination span{
-        transition: .2s;
-    }
-
-    .hidden{
-        display: none;
-    }
-
-    .table .pagination span:hover{
-        cursor: pointer;
-        color: #e4f8f6;
-        transition: .2s;
-    }
-
-    #dots{
-        position: absolute;
-        width: 80%;
-        height: 80%;
-    }
-
-    #dots .dot{
-        width: 6px;
-        height: 6px;
-        border-radius: 100%;
-        position: absolute;
-        transform: translate(-50%, -50%);
-    }
-
-    #dots .green_dot{
-        background-color: green;
-    }
-
-    #dots .red_dot{
-        background-color: red;
-    }
 
     .radio_btns{
         display: inline;
     }
 
-</style>
 
-<script type="text/javascript">
-    <%@ include file="Result.js"%>
-</script>
+</style>
 <script type="text/javascript" charset="UTF-8">
+    <%@ include file="Result.js"%>
     <%@ include file="graph.js" %>
     <%@ include file="graphObserver.js"%>
     <%@ include file="script.js" %>
+
+    <c:forEach var="result" items="${applicationScope.get('dots')}">
+
+    drawDot(
+        calculatePercentage(<c:out value="${result.getX()}"></c:out>, <c:out value="${result.getR()}"></c:out>),
+        calculatePercentage(-1 * <c:out value="${result.getY()}"></c:out>, <c:out value="${result.getR()}"></c:out>),
+        <c:out value="${result.isHit()}"></c:out>
+    );
+    </c:forEach>
+
 </script>
 
 </html>

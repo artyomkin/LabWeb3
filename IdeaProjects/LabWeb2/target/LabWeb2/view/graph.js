@@ -1,17 +1,15 @@
 const size = 500;
 document.addEventListener("DOMContentLoaded",function(){
-
-
-
     var canvas = document.getElementById("graph");
 
     var context = canvas.getContext("2d");
-
+    context.globalCompositeOperation = 'destination-over';
     drawYAxis(context);
     drawXAxis(context);
     drawRect(context);
     drawTriangle(context);
-    drawArc (context);
+    drawArc(context);
+    context.globalCompositeOperation = 'source-over';
 
 })
 
