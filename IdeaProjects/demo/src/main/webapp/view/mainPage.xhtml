@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+<f:view>
+    <h:head><title>Second Page Title</title></h:head>
+
+    <h:body>
+        <ui:include src="canvas.html"></ui:include>
+
+        <h:form>
+            <h:selectOneMenu id="x" value="#{dotBean.x}">
+                <f:selectItem id="x-item1" itemLabel="-5" itemValue="-5" />
+                <f:selectItem id="x-item2" itemLabel="-4" itemValue="-4" />
+                <f:selectItem id="x-item3" itemLabel="-3" itemValue="-3" />
+                <f:selectItem id="x-item4" itemLabel="-2" itemValue="-2" />
+                <f:selectItem id="x-item5" itemLabel="-2" itemValue="-2" />
+                <f:selectItem id="x-item6" itemLabel="-2" itemValue="-2" />
+                <f:selectItem id="x-item7" itemLabel="-1" itemValue="-1" />
+                <f:selectItem id="x-item8" itemLabel="0" itemValue="0" />
+                <f:selectItem id="x-item9" itemLabel="1" itemValue="1" />
+                <f:selectItem id="x-item10" itemLabel="2" itemValue="2" />
+                <f:selectItem id="x-item11" itemLabel="3" itemValue="3" />
+            </h:selectOneMenu>
+            <h:inputText id="y" value="dotBean.y" placeholder="dotBean.y"></h:inputText>
+            <h:commandLink value="1"></h:commandLink>
+            <h:commandLink value="2"></h:commandLink>
+            <h:commandLink value="3"></h:commandLink>
+            <h:commandLink value="4"></h:commandLink>
+            <h:commandLink value="5"></h:commandLink>
+            <h:commandButton value="Send" action="#{dotBean.hitDot()}"></h:commandButton>
+        </h:form>
+        <h:dataTable value="#{dotsBean.dots}" var="dot">
+            <h:column>
+                <f:facet name="x">
+                    <h:outputText value="x" />
+                </f:facet>
+                <h:outputText value="#{dot.x}" />
+            </h:column>
+            <h:column>
+                <f:facet name="y">
+                    <h:outputText value="y" />
+                </f:facet>
+                <h:outputText value="#{dot.y}" />
+            </h:column>
+
+            <h:column>
+                <f:facet name="r">
+                    <h:outputText value="r" />
+                </f:facet>
+                <h:outputText value="#{dot.r}" />
+            </h:column>
+
+            <h:column>
+                <f:facet name="hit">
+                    <h:outputText value="hit" />
+                </f:facet>
+                <h:outputText value="#{dot.hit}" />
+            </h:column>
+        </h:dataTable>
+    </h:body>
+    <script type="text/javascript" src="#{request.getContextPath()}/resources/js/drawGraph.js">
+
+    </script>
+</f:view>
+
+</html>
